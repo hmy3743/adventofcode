@@ -93,7 +93,7 @@
   (main-part-1 (slurp "resources/year_2018/day_3.in")))
 
 (defn overlap?
-  [[id [r c] [rs cs]] field]
+  [[_ [r c] [rs cs]] field]
   (let [locations (->> (range r (+ r rs))
                        (mapcat (fn [r] (map (fn [c] [r c]) (range c (+ c cs))))))]
     (->> locations
@@ -115,15 +115,14 @@
 
 (defn solve-part-2
   [queries]
-  (def field
+  (let [field (->> queries
+                   calc-field-size
+                   (apply empty-field)
+                   (process-queries queries))]
     (->> queries
-         calc-field-size
-         (apply empty-field)
-         (process-queries queries)))
-  (->> queries
-       (map (fn [query] [(overlap? query field) (first query)]))
-       (filter #(not (first %)))
-       (map second)))
+         (map (fn [query] [(overlap? query field) (first query)]))
+         (filter #(not (first %)))
+         (map second))))
 
 (comment
   (solve-part-2 '(["1" [1 3] [4 4]] ["2" [3 1] [4 4]] ["3" [5 5] [2 2]])))

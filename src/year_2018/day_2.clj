@@ -83,7 +83,7 @@
   (pairing-inner items (rest items)))
 
 (comment
-  (pairing '(1 1 1)))
+  (pairing '(1 2 3 4)))
 
 (defn one-by-one
   [[x y]]
