@@ -12,6 +12,10 @@
        (re-seq #"(?:.+\n)+\n")
        (map clojure.string/trim-newline)))
 
+(defn parse-able
+  [value]
+  (try (Integer/parseInt value) value))
+
 (defn parse-passport
   [passport-string]
   (->> passport-string
@@ -57,20 +61,8 @@
                 parse-int
                 (#(and (<= bottom %) (< % top))))))
 
-(defn valid-byr?
-  [{byr :byr}]
-  (int-in? 1920 2003 byr))
-
-(defn valid-iyr?
-  [{iyr :iyr}]
-  (int-in? 2010 2021 iyr))
-
-(defn valid-eyr?
-  [{eyr :eyr}]
-  (int-in? 2020 2031 eyr))
-
 (defn valid-hgt?
-  [{hgt :hgt}]
+  [hgt]
   (if hgt (let [bottoms {"in" 59 "cm" 150}
                 tops {"in" 77 "cm" 194}
                 [_ val unit] (re-matches #"(\d+)(cm|in)" hgt)]
@@ -79,39 +71,29 @@
               (int-in? (bottoms unit) (tops unit) val)))
           false))
 
-(defn valid-hcl?
-  [{hcl :hcl}]
-  (some? (when hcl (re-matches #"#[0-9a-f]{6}" hcl))))
+(spec/def :passport/parsed-int
+  (spec/conformer #(try (Integer/parseInt %) (catch Exception _ ::spec/invalid))))
 
-(defn valid-ecl?
-  [{ecl :ecl}]
-  (contains? #{"amb" "blu" "brn" "gry" "grn" "hzl" "oth"} ecl))
+(spec/def :passport/byr
+  (spec/and :passport/parsed-int (spec/int-in 1920 2003)))
 
-(defn valid-pid?
-  [{pid :pid}]
-  (some? (when pid (re-matches #"\d{9}" pid))))
-
-(defn solve-part-2
-  [passports]
-  (->> passports
-       (filter #(and
-                  (valid-byr? %)
-                  (valid-iyr? %)
-                  (valid-eyr? %)
-                  (valid-hgt? %)
-                  (valid-hcl? %)
-                  (valid-ecl? %)
-                  (valid-pid? %)))
-       count))
+(spec/def :passport/iyr
+  (spec/and :passport/parsed-int (spec/int-in 2010 2021)))
+(spec/def :passport/eyr
+  (spec/and :passport/parsed-int (spec/int-in 2020 2031)))
+(spec/def :passport/hgt
+  (spec/and (spec/conformer #(re-matches #"(\d+)(cm|in)" %))
+            (spec/conformer (fn [[_ u v]] (if (or (nil? u) (nil? v)) ::spec/invalid {:value (Integer/parseInt u) :unit v})))
+            (spec/conformer (fn [{:keys [value unit]}] (if (spec/valid? (spec/int-in ({"in" 59 "cm" 150} unit) ({"in" 77 "cm" 194} unit)) value) true ::spec/invalid)))))
+(spec/def :passport/hcl
+  (spec/and string? #(re-matches #"#[0-9a-f]{6}" %)))
+(spec/def :passport/ecl
+  #{"amb" "blu" "brn" "gry" "grn" "hzl" "oth"})
+(spec/def :passport/pid
+  (spec/and string? #(re-matches #"\d{9}" %)))
 
 (spec/def :passport/all
-  (spec/and valid-byr?
-            valid-iyr?
-            valid-eyr?
-            valid-hgt?
-            valid-hcl?
-            valid-ecl?
-            valid-pid?))
+  (spec/keys :req-un [:passport/byr :passport/iyr :passport/eyr :passport/hgt :passport/hcl :passport/ecl :passport/pid]))
 
 (defn solve-part-2-with-spec
   [passports]
@@ -120,14 +102,10 @@
        count))
 
 (defn main-part-2
-  ([input]
+  [input solve-func]
    (-> input
        parse-input-into-passport
-       solve-part-2))
-  ([input solve-func]
-   (-> input
-       parse-input-into-passport
-       solve-func)))
+       solve-func))
 
 (comment
   (parse-input-into-chunk
@@ -152,23 +130,7 @@
   (-> "resources/year_2020/day_4.in"
       slurp
       main-part-1)
-  (valid-byr? {:ecl "gry", :pid "860033327", :eyr "2020", :hcl "#fffffd", :byr "1937", :iyr "2017", :cid "147", :hgt "183cm"}
-              )
-  (valid-byr? {:byr "1992"})
-  (valid-byr? {:byr "1919"})
-  (valid-byr? {:byr "2003"})
-  (valid-byr? {})
-  (valid-hgt? {})
-  (valid-hgt? {:hgt "1.8m"})
-  (map valid-hgt? '({:hgt "58in"} {:hgt "59in"} {:hgt "76in"} {:hgt "77in"} {:hgt "149cm"} {:hgt "150cm"} {:hgt "193cm"} {:hgt "194cm"}))
-  (valid-hcl? {})
-  (map valid-hcl? '({:hcl "#123123"} {:hcl "123123"} {:hcl "#FFFFFF"}))
-  (map valid-ecl? '({:ecl "amb"} {:ecl "blu"} {:ecl "brn"} {:ecl "gry"} {:ecl "grn"} {:ecl "hzl"} {:ecl "oth"} {:ecl "png"}))
-  (valid-pid? {})
-  (map valid-pid? '({:pid "123123123"} {:pid "023123123"} {:pid "23123123"}))
   (-> "resources/year_2020/day_4.in"
       slurp
-      main-part-2)
-  (-> "resources/year_2020/day_4.in"
-      slurp
-      (main-part-2 solve-part-2-with-spec)))
+      (main-part-2 solve-part-2-with-spec))
+  (spec/explain :passport/all {:byr "1992"}))
