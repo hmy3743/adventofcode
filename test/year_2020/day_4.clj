@@ -29,7 +29,7 @@
                           main-part-1))))
   (testing (is (= true (valid-byr? {"ecl" "gry", "pid" "860033327", "eyr" "2020", "hcl" "#fffffd", "byr" "1937", "iyr" "2017", "cid" "147", "hgt" "183cm"}))))
   (testing (is (= '(true false false false) (map valid-byr? '({"byr" "1992"} {"byr" "1919"} {"byr" "2003"} {})))))
-  (testing (is (= '(false false false true true false false true true false) (map #(valid-hgt? %) '({} {"hgt" "1.8m"} {"hgt" "58in"} {"hgt" "59in"} {"hgt" "76in"} {"hgt" "77in"} {"hgt" "149cm"} {"hgt" "150cm"} {"hgt" "193cm"} {"hgt" "194cm"})))))
+  (testing (is (= '(false false false true true false false true true false) (map valid-hgt? '({} {"hgt" "1.8m"} {"hgt" "58in"} {"hgt" "59in"} {"hgt" "76in"} {"hgt" "77in"} {"hgt" "149cm"} {"hgt" "150cm"} {"hgt" "193cm"} {"hgt" "194cm"})))))
   (testing (is (= '(false true false false) (map valid-hcl? '({} {"hcl" "#123123"} {"hcl" "123123"} {"hcl" "#FFFFFF"})))))
   (testing (is (= '(false true true true true true true true false) (map valid-ecl? '({} {"ecl" "amb"} {"ecl" "blu"} {"ecl" "brn"} {"ecl" "gry"} {"ecl" "grn"} {"ecl" "hzl"} {"ecl" "oth"} {"ecl" "png"})))))
   (testing (is (= '(false true true false) (map valid-pid? '({} {"pid" "123123123"} {"pid" "023123123"} {"pid" "23123123"})))))
