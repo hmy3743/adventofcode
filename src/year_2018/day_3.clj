@@ -40,7 +40,10 @@
   [id locations field]
   (if (seq locations)
     (let [[[r c]] locations]
-      (->> (update-in field [r c] (fn [v] (case v nil id id id \X)))
+      (->> (update-in field [r c] (fn [v] (case v
+                                            nil id
+                                            id id
+                                            \X)))
            (recur id (rest locations))))
     field))
 
@@ -76,7 +79,7 @@
        calc-field-size
        (apply empty-field)
        (process-queries queries)
-       flatten
+       (apply concat)                                       ; -> (apply concat)
        (filter #(= \X %))
        count))
 

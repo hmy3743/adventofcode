@@ -41,6 +41,9 @@
       :else [0 0])))
 
 (comment
+  (let [r (range 200000)]
+    (first r)
+    (last r))
   (extract-two-three {\z 1 \a 2 \c 3 \d 4 \e 2}))
 
 (defn solve-part-1

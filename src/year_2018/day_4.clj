@@ -35,6 +35,8 @@
 (comment
   (parse-input (slurp "resources/year_2018/day_4.in")))
 
+
+
 (defn find-most-sleeping
   [shift-table]
   (let [[_ _ sleep-seconds]
@@ -64,9 +66,10 @@
       time-tuple-to-minute
       (+ (- 59 m))
       (quot 60)))
+(def peek (fn [x] (println x ) x))
 
 (comment
-  (calc-minute-count 0 [1 1 1 1 0]))
+  (calc-minute-count 0 [1 #_#_#_1 1 1 0]))
 
 (defn calc-minutes-between
   [begin-tuple end-tuple]
@@ -116,7 +119,7 @@
                             [[1518 11 21 0 53] :awake]
                             [[1518 11 22 0 4] 3319]
                             [[1518 11 22 0 9] :sleep]
-                            [[1518 11 22 0 44] :awake])))
+                             {:time [1518 11 22 0 44] :action :awake})))
 
 (defn solve-part-1
   [shift-table]
@@ -178,3 +181,9 @@
 
 (comment
   (main-part-2 (slurp "resources/year_2018/day_4.in")))
+
+(defn for-test
+  []
+  (let [_ (println 11)] (println 12)))
+
+(for-test)
