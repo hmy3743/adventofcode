@@ -35,6 +35,9 @@
   (testing (is (= '(false true true false) (map valid-pid? '({} {"pid" "123123123"} {"pid" "023123123"} {"pid" "23123123"})))))
   (testing (is (= 121 (-> "resources/year_2020/day_4.in"
                           slurp
-                          main-part-2)))))
+                          main-part-2))))
+  (testing (is (= 121 (-> "resources/year_2020/day_4.in"
+                          slurp
+                          (main-part-2 solve-part-2-with-spec))))))
 (comment
   (run-tests))

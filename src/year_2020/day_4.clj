@@ -1,4 +1,5 @@
-(ns year-2020.day-4)
+(ns year-2020.day-4
+  (:require [clojure.spec.alpha :as spec]))
 
 (defn inspect
   [arg]
@@ -161,13 +162,35 @@
                   (valid-pid? %)))
        count))
 
+(spec/def :passport/all
+  (spec/and valid-byr?
+            valid-iyr?
+            valid-eyr?
+            valid-hgt?
+            valid-hcl?
+            valid-ecl?
+            valid-pid?))
+
+(defn solve-part-2-with-spec
+  [passports]
+  (->> passports
+       (filter #(spec/valid? :passport/all %))
+       count))
+
 (defn main-part-2
-  [input]
-  (-> input
-      parse-input-into-passport
-      solve-part-2))
+  ([input]
+   (-> input
+       parse-input-into-passport
+       solve-part-2))
+  ([input solve-func]
+   (-> input
+       parse-input-into-passport
+       solve-func)))
 
 (comment
   (-> "resources/year_2020/day_4.in"
       slurp
-      main-part-2))
+      main-part-2)
+  (-> "resources/year_2020/day_4.in"
+      slurp
+      (main-part-2 solve-part-2-with-spec)))
