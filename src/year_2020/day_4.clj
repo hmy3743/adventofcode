@@ -53,11 +53,9 @@
 
 (defn int-in?
   [bottom top integer]
-  (case (some-> integer
+  (true? (some-> integer
                 parse-int
-                (#(and (<= bottom %) (< % top))))
-    true true
-    false))
+                (#(and (<= bottom %) (< % top))))))
 
 (defn valid-byr?
   [{byr :byr}]
