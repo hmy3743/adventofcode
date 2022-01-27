@@ -1,5 +1,5 @@
-(ns year-2018.day-3
-  (:require [clojure.test :refer :all] [year-2018.day-3]))
+(ns year-2018.day-3-test
+  (:require [clojure.test :refer :all] [year-2018.day-3 :refer :all]))
 
 (deftest happypath
   (testing (is (= ["1" [1 3] [4 4]] (parse-line "#1 @ 1,3: 4x4"))))

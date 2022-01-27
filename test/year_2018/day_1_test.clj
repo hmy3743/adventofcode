@@ -1,4 +1,4 @@
-(ns year-2018.day-1
+(ns year-2018.day-1-test
   (:require [clojure.test :refer :all] [year-2018.day-1 :refer :all]))
 
 (deftest happypath

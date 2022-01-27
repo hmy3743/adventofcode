@@ -67,18 +67,15 @@
   (let [lim (generate-lim locations)
         lim-closests (map #(closest-location % locations) lim)
         inf-idx (->> lim-closests
-                     (filter :min-idx)
-                     (reduce #(conj %1 (%2 :min-idx)) '())
-                     (apply hash-set))
+                     (keep :min-idx)
+                     set)
         field (generate-field locations)
         field-closest (map #(closest-location % locations) field)
         fin-closest (->> field-closest
-                         (filter :min-idx)
-                         (filter (fn [{min-idx :min-idx}] (not (inf-idx min-idx)))))
-        fin-counts (->> fin-closest
-                        (map :min-idx)
-                        frequencies)]
-    (->> fin-counts
+                         (keep :min-idx)
+                         (filter #(not (inf-idx %))))]
+    (->> fin-closest
+         frequencies
          vals
          (apply max))))
 
@@ -99,7 +96,7 @@
       generate-field
       (as-> candidates (take 10 candidates)))
   (l1-norm [1 2] [2 3])
-  (closest-location-index [0 0] '([1 2] [2 3] [-1 -1] [4 4]))
+  (closest-location [0 0] '([1 2] [2 3] [-1 -1] [4 4]))
   (generate-lim '([1 2] [2 3] [-1 -1] [4 4]))
   (solve-part-1 '([-1 -1] [1 1] [1 -1] [-1 1] [0 0]))
   (-> input
@@ -107,4 +104,5 @@
       solve-part-1)
   (-> input
       parse-input
-      solve-part-2))
+      solve-part-2)
+  (solve-part-2 '([0 0] [0 1] [1 0] [-1 0] [0 -1] [1 1] [1 -1] [-1 1] [-1 -1])))

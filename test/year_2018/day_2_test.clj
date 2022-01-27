@@ -1,5 +1,5 @@
-(ns year-2018.day-2
-  (:require [clojure.test :refer :all] [year-2018.day-2]))
+(ns year-2018.day-2-test
+  (:require [clojure.test :refer :all] [year-2018.day-2 :refer :all]))
 
 (deftest happypath
   (testing (is (= {\a 2, \b 1, \c 1, \d 1} (count-char "abcda"))))
