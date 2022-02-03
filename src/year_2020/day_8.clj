@@ -73,10 +73,11 @@
   [program]
   (->> program
        generate-candidate-programs
-       (pmap initial-state)
+       (map initial-state)
        (pmap process-all)
        (filter (fn [{index :index}] (or (< index 0) (<= (count program) index))))
-       (map :acc)))
+       first
+       :acc))
 
 (comment
   (parse-input input)

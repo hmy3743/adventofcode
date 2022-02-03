@@ -4,32 +4,16 @@
   [input]
   (re-seq #"[^ \r\n]+" input))
 
-(defn char-counter
-  [ch-map ch]
-  (let [number (ch-map ch)]
-    (if (some? number)
-      (conj ch-map [ch (inc number)])
-      (conj ch-map [ch 1]))))
-
 (defn count-char
   [string]
-  (reduce char-counter {} string))
-
-(comment
-  (count-char "abcda")
-  (map count-char ["abcd" "abcda" "abccc"]))
+  (frequencies string))
 
 (defn counts-reducer
-  [status _ number]
-  (let [[two three] status]
-    (case number
-      2 [(inc two) three]
-      3 [two (inc three)]
-      status)))
-
-(comment
-  (counts-reducer [0 0] \a 2)
-  (counts-reducer [1 1] \c 3))
+  [[two three] _ number]
+  (case number
+    2 [(inc two) three]
+    3 [two (inc three)]
+    [two three]))
 
 (defn extract-two-three
   [counts]
@@ -39,12 +23,6 @@
       (< 0 two) [1 0]
       (< 0 three) [0 1]
       :else [0 0])))
-
-(comment
-  (let [r (range 200000)]
-    (first r)
-    (last r))
-  (extract-two-three {\z 1 \a 2 \c 3 \d 4 \e 2}))
 
 (defn solve-part-1
   [strings]
